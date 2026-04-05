@@ -13,6 +13,7 @@ use SebLucas\Cops\Output\OPDSRenderer;
 use SebLucas\Cops\Pages\PageId;
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/lib/Output/CoolReaderOPDSRenderer.php';
 
 OPDSRenderer::$endpoint = 'feedcr.php';
 
