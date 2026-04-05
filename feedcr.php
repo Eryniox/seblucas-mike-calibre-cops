@@ -15,6 +15,13 @@ use SebLucas\Cops\Pages\PageId;
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/lib/Output/CoolReaderOPDSRenderer.php';
 
+// Temporary debug logging — remove after diagnosis
+file_put_contents(
+    __DIR__ . '/feedcr_debug.log',
+    date('Y-m-d H:i:s') . ' ' . $_SERVER['REQUEST_URI'] . ' UA:' . ($_SERVER['HTTP_USER_AGENT'] ?? '') . "\n",
+    FILE_APPEND
+);
+
 OPDSRenderer::$endpoint = 'feedcr.php';
 
 $request = new Request();
