@@ -28,13 +28,10 @@ class CoolReaderOPDSRenderer extends OPDSRenderer
     protected function renderLink($link, $number = null)
     {
         $this->getXmlStream()->startElement("link");
-        if ($link instanceof LinkFeed) {
-            // Use $link->href directly: produces ?page=6&db=0 instead of feedcr.php?page=6&db=0
-            $this->getXmlStream()->writeAttribute("href", $link->href);
-        } else {
-            // LinkEntry (covers, downloads, etc.) – use href as-is, no endpoint prefix
-            $this->getXmlStream()->writeAttribute("href", $link->hrefXhtml(static::$endpoint));
-        }
+        // Use hrefXhtml() — produces feedcr.php?page=6&db=0.
+        // CoolReader GL path-doubles this to /feedcr.php/feedcr.php?page=6,
+        // which is caught by the redirect logic in feedcr.php.
+        $this->getXmlStream()->writeAttribute("href", $link->hrefXhtml(static::$endpoint));
         $this->getXmlStream()->writeAttribute("type", $link->type);
         if (!is_null($link->rel)) {
             $this->getXmlStream()->writeAttribute("rel", $link->rel);

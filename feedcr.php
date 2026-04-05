@@ -15,12 +15,34 @@ use SebLucas\Cops\Pages\PageId;
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/lib/Output/CoolReaderOPDSRenderer.php';
 
-// Temporary debug logging — remove after diagnosis
+// Debug logging (remove after diagnosis)
 file_put_contents(
     __DIR__ . '/feedcr_debug.log',
     date('Y-m-d H:i:s') . ' ' . $_SERVER['REQUEST_URI'] . ' UA:' . ($_SERVER['HTTP_USER_AGENT'] ?? '') . "\n",
     FILE_APPEND
 );
+
+// Fix CoolReader GL URL path accumulation bug.
+// CoolReader GL appends /<href> to the current URL instead of proper RFC 3986 resolution,
+// producing URLs like /feedcr.php/feedcr.php?page=6 or /feedcr.php/?db=0/?page=6.
+// We detect this and redirect to the clean URL. CoolReader then updates its base URL,
+// so each subsequent navigation starts fresh.
+$_rawUri = $_SERVER['REQUEST_URI'] ?? '';
+$_selfScript = $_SERVER['SCRIPT_NAME'] ?? '/feedcr.php';
+$_scriptBasename = basename($_selfScript); // feedcr.php
+if (substr_count($_rawUri, $_scriptBasename) > 1) {
+    // feedcr.php appears more than once — path doubling (e.g. /feedcr.php/feedcr.php?page=6)
+    $_lastPos = strrpos($_rawUri, $_scriptBasename);
+    $_suffix = substr($_rawUri, $_lastPos + strlen($_scriptBasename));
+    header('Location: ' . $_selfScript . $_suffix, true, 302);
+    exit;
+} elseif (strpos($_rawUri, $_selfScript . '/') !== false) {
+    // /feedcr.php/ with trailing slash (e.g. /feedcr.php/?db=0/?page=6)
+    $_lastQ = strrpos($_rawUri, '?');
+    header('Location: ' . $_selfScript . ($_lastQ !== false ? substr($_rawUri, $_lastQ) : ''), true, 302);
+    exit;
+}
+unset($_rawUri, $_selfScript, $_scriptBasename, $_lastPos, $_suffix, $_lastQ);
 
 OPDSRenderer::$endpoint = 'feedcr.php';
 
