@@ -8,6 +8,7 @@
  */
 use SebLucas\Cops\Input\Config;
 use SebLucas\Cops\Input\Request;
+use SebLucas\Cops\Output\CoolReaderOPDSRenderer;
 use SebLucas\Cops\Output\OPDSRenderer;
 use SebLucas\Cops\Pages\PageId;
 
@@ -34,7 +35,7 @@ if (Config::get('fetch_protect') == '1') {
 // header('Content-Type:application/xml');
 header('Content-Type:text/xml');
 
-$OPDSRender = new OPDSRenderer();
+$OPDSRender = new CoolReaderOPDSRenderer();
 
 switch ($page) {
     case PageId::OPENSEARCH :

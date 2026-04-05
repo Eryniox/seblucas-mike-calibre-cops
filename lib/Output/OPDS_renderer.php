@@ -160,8 +160,7 @@ class OPDSRenderer
         $this->getXmlStream()->text($page->authorEmail);
         $this->getXmlStream()->endElement();
         $this->getXmlStream()->endElement();
-        $startHref = Format::addDatabaseParam("?", $database);
-        $link = new LinkNavigation($startHref === "?" ? "" : $startHref, "start", "Home");
+        $link = new LinkNavigation("", "start", "Home");
         $this->renderLink($link);
         if ($page->containsBook()) {
             $link = new LinkFeed("?" . $request->query(), "self");
