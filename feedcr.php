@@ -15,13 +15,6 @@ use SebLucas\Cops\Pages\PageId;
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/lib/Output/CoolReaderOPDSRenderer.php';
 
-// Debug logging (remove after diagnosis)
-file_put_contents(
-    __DIR__ . '/feedcr_debug.log',
-    date('Y-m-d H:i:s') . ' ' . $_SERVER['REQUEST_URI'] . ' UA:' . ($_SERVER['HTTP_USER_AGENT'] ?? '') . "\n",
-    FILE_APPEND
-);
-
 // Fix CoolReader GL URL path accumulation bug.
 // CoolReader GL appends /<href> to the current URL instead of proper RFC 3986 resolution,
 // producing URLs like /feedcr.php/feedcr.php?page=6 or /feedcr.php/?db=0/?page=6.
