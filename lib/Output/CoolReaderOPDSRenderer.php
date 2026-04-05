@@ -28,10 +28,16 @@ class CoolReaderOPDSRenderer extends OPDSRenderer
     protected function renderLink($link, $number = null)
     {
         $this->getXmlStream()->startElement("link");
-        // Use hrefXhtml() — produces feedcr.php?page=6&db=0.
-        // CoolReader GL path-doubles this to /feedcr.php/feedcr.php?page=6,
-        // which is caught by the redirect logic in feedcr.php.
-        $this->getXmlStream()->writeAttribute("href", $link->hrefXhtml(static::$endpoint));
+        $href = $link->hrefXhtml(static::$endpoint);
+        // Make href absolute-path by prepending / if it's a relative URL.
+        // CoolReader GL appends relative hrefs to the current URL path,
+        // causing path accumulation. Absolute-path hrefs (/feedcr.php?...,
+        // /fetch.php?..., /download/...) are always resolved from the root,
+        // regardless of the current URL.
+        if ($href !== '' && $href[0] !== '/' && !str_starts_with($href, 'http://') && !str_starts_with($href, 'https://')) {
+            $href = '/' . $href;
+        }
+        $this->getXmlStream()->writeAttribute("href", $href);
         $this->getXmlStream()->writeAttribute("type", $link->type);
         if (!is_null($link->rel)) {
             $this->getXmlStream()->writeAttribute("rel", $link->rel);
