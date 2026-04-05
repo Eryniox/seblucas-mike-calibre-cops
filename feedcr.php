@@ -13,6 +13,8 @@ use SebLucas\Cops\Pages\PageId;
 
 require_once __DIR__ . '/config.php';
 
+OPDSRenderer::$endpoint = 'feedcr.php';
+
 $request = new Request();
 $page = $request->get('page', PageId::INDEX);
 $query = $request->get('query');
